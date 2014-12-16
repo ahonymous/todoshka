@@ -7,9 +7,6 @@ html, body {
     margin: 0 auto;
     text-align: center;
 }
-table {
-    display: none;
-}
 .even {
     background-color: aqua;
 }
