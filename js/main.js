@@ -35,7 +35,6 @@ if (!view.querySelector('table')) {
 
 todo.addEventListener('keydown', function (event) {
     if (event.keyCode == 13 && event.target.value) {
-        console.log(table);
         var row = tbody.insertRow(-1);
 
         row.appendChild(getElement('td', '')).appendChild(getInput('checkbox', ''));
