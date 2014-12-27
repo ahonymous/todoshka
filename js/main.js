@@ -1,8 +1,8 @@
 var todo = document.querySelector('#todo input'),
     table = document.createElement('table'),
-    thead = table.createTHead(),
-    thRow = thead.insertRow(-1),
-    tbody = table.createTBody(),
+    tHead = table.createTHead(),
+    thRow = tHead.insertRow(-1),
+    tBody = table.createTBody(),
     view = document.querySelector('#view');
 
 function getInput(type, name) {
@@ -33,8 +33,8 @@ thRow.appendChild(getElement('th'));
 thRow.appendChild(getElement('th', ' X ', 'delete'));
 
 thRow.querySelector('th.delete').addEventListener('click', function (event) {
-    if (tbody.childElementCount > 0) {
-        tbody.querySelectorAll('tr').forEach(function (val) {
+    if (tBody.childElementCount > 0) {
+        tBody.querySelectorAll('tr').forEach(function (val) {
             val.remove();
         });
     }
@@ -42,7 +42,7 @@ thRow.querySelector('th.delete').addEventListener('click', function (event) {
     table.style.display = 'none';
 });
 
-if (!tbody.childNodes.length) {
+if (!tBody.childNodes.length) {
     table.style.display = 'none';
 }
 
@@ -52,19 +52,19 @@ if (!view.querySelector('table')) {
 
 todo.addEventListener('keydown', function (event) {
     if (event.keyCode == 13 && event.target.value) {
-        var row = tbody.insertRow(0);
+        var row = tBody.insertRow(0);
 
         row.appendChild(getElement('td', '')).appendChild(getInput('checkbox', ''));
         row.appendChild(getElement('td', event.target.value));
         row.appendChild(getElement('td', ' X ', 'delete'));
 
-        table.style.display = tbody.childNodes.length ? 'table' : 'none';
+        table.style.display = tBody.childNodes.length ? 'table' : 'none';
 
         event.target.value = "";
         row.querySelectorAll('td.delete').forEach(function (val) {
             val.addEventListener('click', function (event) {
                 event.target.parentNode.remove();
-                if (!tbody.childNodes.length) {
+                if (!tBody.childNodes.length) {
                     table.style.display = 'none';
                 }
             });
