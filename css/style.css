@@ -9,6 +9,15 @@ html, body {
     text-align: center;
 }
 
-.even {
-    background-color: aqua;
+tr > td {
+    border-top: 1px solid grey;
+}
+
+.delete:hover {
+    background-color: red;
+}
+
+table {
+    border-collapse: collapse;
+    min-width: 100%;
 }

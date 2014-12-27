@@ -13,19 +13,22 @@ function getInput(type, name) {
 
     return el;
 }
-function getElement(tagName, value) {
+function getElement(tagName, value, addCssClass) {
     var el = document.createElement(tagName);
 
     el.innerHTML = value;
+    if (addCssClass) {
+        el.className = addCssClass;
+    }
 
     return el;
 
 }
 thRow.appendChild(document.createElement('th')).appendChild(getInput('checkbox', ''));
 thRow.appendChild(document.createElement('th'));
-thRow.appendChild(document.createElement('th')).appendChild(getElement('button', 'X'));
+thRow.appendChild(getElement('th', ' X ', 'delete'));
 
-if (!tbody.length) {
+if (!tbody.childNodes.length) {
     table.style.display = 'none';
 }
 
@@ -39,14 +42,23 @@ todo.addEventListener('keydown', function (event) {
 
         row.appendChild(getElement('td', '')).appendChild(getInput('checkbox', ''));
         row.appendChild(getElement('td', event.target.value));
-        row.appendChild(getElement('td', 'X'));
+        row.appendChild(getElement('td', ' X ', 'delete'));
 
-        if (tbody.childNodes.length % 2) {
-            row.className = 'even';
-        }
-
-        table.style.display = tbody.childNodes.length ? 'block' : 'none';
+        table.style.display = tbody.childNodes.length ? 'table' : 'none';
 
         event.target.value = "";
+        row.querySelectorAll('td.delete').forEach(function (val) {
+            val.addEventListener('click', function (event) {
+                event.target.parentNode.remove();
+                if (!tbody.childNodes.length) {
+                    table.style.display = 'none';
+                }
+            });
+        });
+
     }
 });
+
+NodeList.prototype.forEach = function (callback) {
+    Array.prototype.forEach.call(this, callback);
+};
