@@ -13,19 +13,23 @@ function getInput(type, name) {
 
     return el;
 }
+
 function getElement(tagName, value, addCssClass) {
     var el = document.createElement(tagName);
 
-    el.innerHTML = value;
+    if (value) {
+        el.innerHTML = value;
+    }
+
     if (addCssClass) {
         el.className = addCssClass;
     }
 
     return el;
-
 }
-thRow.appendChild(document.createElement('th')).appendChild(getInput('checkbox', ''));
-thRow.appendChild(document.createElement('th'));
+
+thRow.appendChild(getElement('th').appendChild(getInput('checkbox', '')));
+thRow.appendChild(getElement('th'));
 thRow.appendChild(getElement('th', ' X ', 'delete'));
 
 thRow.querySelector('th.delete').addEventListener('click', function (event) {
