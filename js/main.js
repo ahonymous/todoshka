@@ -28,6 +28,16 @@ thRow.appendChild(document.createElement('th')).appendChild(getInput('checkbox',
 thRow.appendChild(document.createElement('th'));
 thRow.appendChild(getElement('th', ' X ', 'delete'));
 
+thRow.querySelector('th.delete').addEventListener('click', function (event) {
+    if (tbody.childElementCount > 0) {
+        tbody.querySelectorAll('tr').forEach(function (val) {
+            val.remove();
+        });
+    }
+
+    table.style.display = 'none';
+});
+
 if (!tbody.childNodes.length) {
     table.style.display = 'none';
 }
@@ -38,7 +48,7 @@ if (!view.querySelector('table')) {
 
 todo.addEventListener('keydown', function (event) {
     if (event.keyCode == 13 && event.target.value) {
-        var row = tbody.insertRow(-1);
+        var row = tbody.insertRow(0);
 
         row.appendChild(getElement('td', '')).appendChild(getInput('checkbox', ''));
         row.appendChild(getElement('td', event.target.value));
