@@ -3,7 +3,16 @@ var todo = document.querySelector('#todo input'),
     tHead = table.createTHead(),
     thRow = tHead.insertRow(-1),
     tBody = table.createTBody(),
-    view = document.querySelector('#view');
+    tFooter = table.createTFoot(),
+    tfRow = tFooter.insertRow(-1),
+    countTodo = getElement('td', tBody.childElementCount + '', 'count'),
+    view = document.querySelector('#view'),
+    todoChecked = [],
+    removeList = function (list) {
+        list.forEach(function (val) {
+            val.remove();
+        });
+    };
 
 function getInput(type, name) {
     var el = document.createElement('input');
@@ -28,23 +37,27 @@ function getElement(tagName, value, addCssClass) {
     return el;
 }
 
-thRow.appendChild(getElement('th').appendChild(getInput('checkbox', '')));
-thRow.appendChild(getElement('th'));
+thRow.appendChild(getElement('th')).appendChild(getInput('checkbox', ''));
+thRow.appendChild(getElement('th', 'TODO'));
 thRow.appendChild(getElement('th', ' X ', 'delete'));
 
-thRow.querySelector('th.delete').addEventListener('click', function (event) {
+thRow.querySelector('th.delete').addEventListener('click', function () {
+    //if (thRow.querySelector('th > input[type="checkbox"]').checked) {
+    //    tBody.querySelectorAll('td > input[type="checkbox"]').filter(function (val) {
+    //        return val.checked;
+    //    }).forEach(removeList);
+    //}
     if (tBody.childElementCount > 0) {
         tBody.querySelectorAll('tr').forEach(function (val) {
             val.remove();
         });
+        countTodo.innerHTML = tBody.childElementCount;
     }
-
-    table.style.display = 'none';
 });
 
-if (!tBody.childNodes.length) {
-    table.style.display = 'none';
-}
+tfRow.appendChild(getElement('td', 'Counts:'));
+tfRow.appendChild(countTodo);
+tfRow.appendChild(getElement('td'));
 
 if (!view.querySelector('table')) {
     view.appendChild(table);
@@ -58,21 +71,20 @@ todo.addEventListener('keydown', function (event) {
         row.appendChild(getElement('td', event.target.value));
         row.appendChild(getElement('td', ' X ', 'delete'));
 
-        table.style.display = tBody.childNodes.length ? 'table' : 'none';
-
+        countTodo.innerHTML = tBody.childElementCount;
         event.target.value = "";
         row.querySelectorAll('td.delete').forEach(function (val) {
             val.addEventListener('click', function (event) {
                 event.target.parentNode.remove();
-                if (!tBody.childNodes.length) {
-                    table.style.display = 'none';
-                }
+                countTodo.innerHTML = tBody.childElementCount;
             });
         });
-
     }
 });
 
 NodeList.prototype.forEach = function (callback) {
     Array.prototype.forEach.call(this, callback);
+};
+NodeList.prototype.filter = function (callback) {
+    Array.prototype.filter.call(this, callback);
 };
