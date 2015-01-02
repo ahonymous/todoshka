@@ -12,7 +12,9 @@ html, body {
 tr > td {
     border-top: 1px solid grey;
 }
-
+.delete {
+    border: 1px solid black;
+}
 .delete:hover {
     background-color: red;
 }
