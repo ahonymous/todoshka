@@ -9,14 +9,27 @@ html, body {
     text-align: center;
 }
 
+tbody > tr {
+    border-top: 1px solid #dcdcdc;
+    border-bottom: 1px solid #dcdcdc;
+}
+
+thead > tr {
+    border-bottom: 1px solid #dcdcdc;
+}
+
 tr > td {
-    border-top: 1px solid grey;
+    min-height: 100%;
 }
+
 .delete {
-    border: 1px solid black;
+    display: none;
+
 }
+
 .delete:hover {
     background-color: red;
+    color: white;
 }
 
 table {
