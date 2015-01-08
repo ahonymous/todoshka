@@ -80,6 +80,10 @@ function newTodo(todoshka) {
     rowRemove.addEventListener('click', function () {
         row.remove();
         countTodo.innerHTML = tBody.childElementCount;
+        checker--;
+        if (checker < 2) {
+            allRemove.style.display = '';
+        }
     });
     row.appendChild(rowRemove);
 
@@ -91,7 +95,7 @@ function editTodo(target) {
     var oldTodo = getInput('text', '', target.innerHTML),
         sender = getElement('button', 'OK');
 
-    sender.addEventListener('click', function (e) {
+    sender.addEventListener('click', function () {
         var newTodo = oldTodo.value;
 
         target.childNodes.forEach(function (val) {
