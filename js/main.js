@@ -49,6 +49,7 @@ function newTodo(todoshka) {
         rowRemove = getElement('td', ' X ', 'delete'),
         rowChecker = getInput('checkbox', '');
 
+    row.draggable = true;
     rowChecker.addEventListener('click', function (e) {
         thRow.querySelector('th > input[type="checkbox"]').checked = false;
 
@@ -95,7 +96,7 @@ function editTodo(target) {
     var oldTodo = getInput('text', '', target.innerHTML),
         sender = getElement('button', 'OK');
 
-    sender.addEventListener('click', function () {
+    function endEdit() {
         var newTodo = oldTodo.value;
 
         target.childNodes.forEach(function (val) {
@@ -103,6 +104,16 @@ function editTodo(target) {
         });
 
         target.innerHTML = newTodo;
+    }
+
+    sender.addEventListener('click', function () {
+        endEdit();
+    });
+
+    oldTodo.addEventListener('keydown', function (e) {
+        if (e.keyCode == 13 && e.target.value) {
+            endEdit();
+        }
     });
     target.innerHTML = null;
     target.appendChild(oldTodo);
