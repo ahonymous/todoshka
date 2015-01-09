@@ -36,3 +36,11 @@ table {
     border-collapse: collapse;
     min-width: 100%;
 }
+
+.over {
+    border: 2px dashed #000;
+}
+.drag {
+    background-color: grey;
+    opacity: 0.4;
+}
