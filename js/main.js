@@ -4,12 +4,12 @@ var table = document.createElement('table'),
     tBody = table.createTBody(),
     tFooter = table.createTFoot(),
     tfRow = tFooter.insertRow(-1),
-    countTodo = getElement('td', tBody.childElementCount + '', 'count'),
+    countTodo = getElement('td', 'counts: '),
+    countChecked = getElement('td', 'checked: '),
     view = document.querySelector('#view'),
     todoInput = getInput('text', 'todoshka'),
     allRemove = getElement('th', ' X ', 'delete'),
-    checker = 0,
-    dragEl;
+    checker = 0;
 
 function getInput(type, name, value) {
     var el = document.createElement('input');
@@ -100,119 +100,134 @@ function newTodo(todoshka) {
 
         if (e.target.checked === true) {
             checker++;
+            row.classList.add('done');
         }
         if (e.target.checked === false) {
             checker--;
+            row.classList.remove('done');
         }
 
-        if (checker > 1 && !allRemove.style.display) {
+        if (checker > 0 && !allRemove.style.display) {
             allRemove.style.display = 'table-cell';
         }
-        if (checker < 2 && allRemove.style.display) {
+        if (checker < 1 && allRemove.style.display) {
             allRemove.style.display = '';
         }
 
+        countChecked.querySelector('span.check').innerText = tBody.querySelectorAll('input[type="checkbox"]:checked').length + '';
     });
-    row.appendChild(getElement('td', '')).appendChild(rowChecker);
 
+    row.appendChild(getElement('td', '')).appendChild(rowChecker);
     row.appendChild(getElement('td', '<span>' + todoshka.value + '</span>'));
+
     row.querySelector('span').addEventListener('click', function (e) {
         if (e.target == this) {
             editTodo(e.target);
         }
     });
-
-    rowRemove.addEventListener('click', function () {
-        row.remove();
-        countTodo.innerHTML = tBody.childElementCount;
-        checker--;
-        if (checker < 2) {
-            allRemove.style.display = '';
-        }
-    });
-    row.appendChild(rowRemove);
-
-    countTodo.innerHTML = tBody.childElementCount;
+    countTodo.querySelector('span.count').innerHTML = tBody.childElementCount + '';
     todoshka.value = "";
 }
 
 function editTodo(target) {
-    var oldTodo = getInput('text', '', target.innerHTML),
-        sender = getElement('button', 'OK');
+    var oldest = target.innerHTML,
+        editor = getInput('text', '', oldest),
+        sender = getElement('button', 'OK'),
+        canceler = getElement('button', 'Cancel');
 
-    function endEdit() {
-        var newTodo = oldTodo.value;
+    function endEdit(newTodo) {
 
-        target.childNodes.forEach(function (val) {
+        [].slice.call(target.childNodes, 0).forEach(function (val) {
             val.remove();
         });
+
 
         target.innerHTML = newTodo;
     }
 
     sender.addEventListener('click', function () {
-        endEdit();
+        endEdit(editor.value);
     });
 
-    oldTodo.addEventListener('keydown', function (e) {
+    canceler.addEventListener('click', function () {
+        target.innerHTML = oldest;
+    });
+
+    editor.addEventListener('keydown', function (e) {
         if (e.keyCode == 13 && e.target.value) {
-            endEdit();
+            endEdit(e.target.value);
+        }
+
+        if (e.keyCode == 27) {
+            target.innerHTML = oldest;
         }
     });
     target.innerHTML = null;
-    target.appendChild(oldTodo);
+    target.appendChild(editor);
     target.appendChild(sender);
+    target.appendChild(canceler);
 }
+
+countTodo.appendChild(getElement('span', tBody.childElementCount + '', 'count'));
+countChecked.appendChild(getElement('span', tBody.querySelectorAll('input[type="checkbox"]:checked').length + '', 'check'));
+
+allRemove.addEventListener('click', function (e) {
+    var thChecker = thRow.querySelector('th > input[type="checkbox"]');
+
+    [].slice.call(tBody.querySelectorAll('input[type=checkbox]'), 0).filter(function (val) {
+        return val.checked;
+    }).forEach(function (val) {
+        val.parentNode.parentNode.remove();
+    });
+
+    countTodo.querySelector('span.count').innerText = tBody.childElementCount + '';
+    countChecked.querySelector('span.check').innerText = tBody.querySelectorAll('input[type="checkbox"]:checked').length + '';
+    thChecker.checked = false;
+    e.target.style.display = '';
+});
 
 thRow.appendChild(getElement('th')).appendChild(getInput('checkbox', '')).addEventListener('click', function (e) {
     allRemove.style.display = (e.target.checked && tBody.childElementCount > 0) ? 'table-cell' : '';
     if (!tBody.childElementCount) {
         e.target.checked = false;
         alert('Not entered todo\'s!!!');
+    } else {
+        [].slice.call(tBody.childNodes, 0).filter(function (val) {
+            if (e.target.checked) {
+                val.classList.add('done');
+            } else {
+                val.classList.remove('done');
+            }
+            val.querySelector('td > input[type="checkbox"]').checked = e.target.checked;
+        });
     }
+
+    countChecked.querySelector('span.check').innerText = tBody.querySelectorAll('input[type="checkbox"]:checked').length + '';
 });
 
 thRow.appendChild(getElement('th')).appendChild(todoInput);
 thRow.lastElementChild.appendChild(getElement('button', 'ADD', null, 'todoshkaButton'));
 thRow.appendChild(allRemove);
-allRemove.addEventListener('click', function (e) {
-    var thChecker = thRow.querySelector('th > input[type="checkbox"]');
-
-    if (thChecker.checked && tBody.childElementCount > 0) {
-        tBody.querySelectorAll('tr').forEach(function (val) {
-            val.remove();
-        });
-    } else {
-        [].slice.call(tBody.querySelectorAll('input[type=checkbox]'), 0).filter(function (val) {
-            return val.checked;
-        }).forEach(function (val) {
-            val.parentNode.parentNode.remove();
-        });
-    }
-
-    countTodo.innerHTML = tBody.childElementCount;
-    thChecker.checked = false;
-    e.target.style.display = '';
-});
-
-tfRow.appendChild(getElement('td', 'Counts:'));
-tfRow.appendChild(countTodo);
-
-if (!view.querySelector('table')) {
-    view.appendChild(table);
-}
 
 thRow.querySelector('#todoshka').addEventListener('keydown', function (e) {
     if (e.keyCode == 13 && e.target.value) {
         newTodo(e.target);
     }
 });
+
 thRow.querySelector('#todoshkaButton').addEventListener('click', function (e) {
     var todoshka = thRow.querySelector('#todoshka');
     if (e.target == thRow.querySelector('#todoshkaButton') && todoshka.value) {
         newTodo(todoshka);
     }
 });
+
+tfRow.appendChild(countChecked);
+tfRow.appendChild(countTodo);
+
+if (!view.querySelector('table')) {
+    view.appendChild(table);
+}
 
 NodeList.prototype.forEach = function (callback) {
     Array.prototype.forEach.call(this, callback);
