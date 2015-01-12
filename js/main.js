@@ -49,49 +49,49 @@ function newTodo(todoshka) {
     var row = tBody.insertRow(0),
         rowRemove = getElement('td', ' X ', 'delete'),
         rowChecker = getInput('checkbox', '');
-
-    row.draggable = true;
-    row.addEventListener('dragstart', function (e) {
-        row.classList.add('drag');
-
-        dragEl = this;
-
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/html', this.innerHTML);
-    });
-    row.addEventListener('dragenter', function () {
-        row.classList.add('over');
-    });
-    row.addEventListener('dragover', function (e) {
-        if (e.preventDefault) {
-            e.preventDefault(); // Necessary. Allows us to drop.
-        }
-
-        e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
-
-        return false;
-    });
-    row.addEventListener('dragleave', function () {
-        row.classList.remove('over');
-    });
-    row.addEventListener('drop', function (e) {
-        if (e.stopPropagation) {
-            e.stopPropagation(); // stops the browser from redirecting.
-        }
-
-        // See the section on the DataTransfer object.
-        if (dragEl != this) {
-            // Set the source column's HTML to the HTML of the columnwe dropped on.
-            dragEl.innerHTML = this.innerHTML;
-            this.innerHTML = e.dataTransfer.getData('text/html');
-        }
-
-        return false;
-    });
-    row.addEventListener('dragend', function () {
-        this.classList.remove('over');
-        this.classList.remove('drag');
-    });
+    //
+    //row.draggable = true;
+    //row.addEventListener('dragstart', function (e) {
+    //    row.classList.add('drag');
+    //
+    //    dragEl = this;
+    //
+    //    e.dataTransfer.effectAllowed = 'move';
+    //    e.dataTransfer.setData('text/html', this.innerHTML);
+    //});
+    //row.addEventListener('dragenter', function () {
+    //    row.classList.add('over');
+    //});
+    //row.addEventListener('dragover', function (e) {
+    //    if (e.preventDefault) {
+    //        e.preventDefault(); // Necessary. Allows us to drop.
+    //    }
+    //
+    //    e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+    //
+    //    return false;
+    //});
+    //row.addEventListener('dragleave', function () {
+    //    row.classList.remove('over');
+    //});
+    //row.addEventListener('drop', function (e) {
+    //    if (e.stopPropagation) {
+    //        e.stopPropagation(); // stops the browser from redirecting.
+    //    }
+    //
+    //    // See the section on the DataTransfer object.
+    //    if (dragEl != this) {
+    //        // Set the source column's HTML to the HTML of the columnwe dropped on.
+    //        dragEl.innerHTML = this.innerHTML;
+    //        this.innerHTML = e.dataTransfer.getData('text/html');
+    //    }
+    //
+    //    return false;
+    //});
+    //row.addEventListener('dragend', function () {
+    //    this.classList.remove('over');
+    //    this.classList.remove('drag');
+    //});
 
     rowChecker.addEventListener('click', function (e) {
         thRow.querySelector('th > input[type="checkbox"]').checked = false;
@@ -115,7 +115,8 @@ function newTodo(todoshka) {
     });
     row.appendChild(getElement('td', '')).appendChild(rowChecker);
 
-    row.appendChild(getElement('td', todoshka.value)).addEventListener('click', function (e) {
+    row.appendChild(getElement('td', '<span>' + todoshka.value + '</span>'));
+    row.querySelector('span').addEventListener('click', function (e) {
         if (e.target == this) {
             editTodo(e.target);
         }
