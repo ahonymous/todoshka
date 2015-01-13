@@ -111,16 +111,14 @@ function newTodo(todoshka) {
 
         countChecked.querySelector('span.check').innerText = tBody.querySelectorAll('input[type="checkbox"]:checked').length + '';
     }
+
     rowChecker.addEventListener('click', rowCheckerListener);
 
     row.appendChild(getElement('td', '')).appendChild(rowChecker);
     row.appendChild(getElement('td', '<span>' + todoshka.value + '</span>'));
 
-    row.querySelector('span').addEventListener('click', editTodo /*function (e) {
-        //if (e.target == this) {
-        //    editTodo(e.target);
-        //}
-    }*/);
+    row.querySelector('span').addEventListener('click', editTodo);
+
     countTodo.querySelector('span.count').innerHTML = tBody.childElementCount + '';
     todoshka.value = "";
 }
