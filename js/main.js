@@ -47,64 +47,59 @@ function getElement(tagName, value, addCssClass, name) {
 
 function newTodo(todoshka) {
     var row = tBody.insertRow(0),
-        rowRemove = getElement('td', ' X ', 'delete'),
         rowChecker = getInput('checkbox', '');
-    //
-    //row.draggable = true;
-    //row.addEventListener('dragstart', function (e) {
-    //    row.classList.add('drag');
-    //
-    //    dragEl = this;
-    //
-    //    e.dataTransfer.effectAllowed = 'move';
-    //    e.dataTransfer.setData('text/html', this.innerHTML);
-    //});
-    //row.addEventListener('dragenter', function () {
-    //    row.classList.add('over');
-    //});
-    //row.addEventListener('dragover', function (e) {
-    //    if (e.preventDefault) {
-    //        e.preventDefault(); // Necessary. Allows us to drop.
-    //    }
-    //
-    //    e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
-    //
-    //    return false;
-    //});
-    //row.addEventListener('dragleave', function () {
-    //    row.classList.remove('over');
-    //});
-    //row.addEventListener('drop', function (e) {
-    //    if (e.stopPropagation) {
-    //        e.stopPropagation(); // stops the browser from redirecting.
-    //    }
-    //
-    //    // See the section on the DataTransfer object.
-    //    if (dragEl != this) {
-    //        // Set the source column's HTML to the HTML of the columnwe dropped on.
-    //        dragEl.innerHTML = this.innerHTML;
-    //        this.innerHTML = e.dataTransfer.getData('text/html');
-    //    }
-    //
-    //    return false;
-    //});
-    //row.addEventListener('dragend', function () {
-    //    this.classList.remove('over');
-    //    this.classList.remove('drag');
-    //});
 
-    rowChecker.addEventListener('click', function (e) {
+    row.draggable = true;
+    row.addEventListener('dragstart', function (e) {
+        row.classList.add('drag');
+        dragEl = row;
+
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', row.innerHTML);
+    });
+
+    row.addEventListener('dragenter', function (e) {
+        row.classList.add('over');
+        e.preventDefault();
+    });
+
+    row.addEventListener('dragover', function (e) {
+        e.preventDefault();
+    });
+
+    row.addEventListener('dragleave', function () {
+        row.classList.remove('over');
+    });
+
+    row.addEventListener('drop', function (e) {
+        if (dragEl != row) {
+            dragEl.innerHTML = row.innerHTML;
+            row.innerHTML = e.dataTransfer.getData('text/html');
+            dragEl.querySelector('input[type=checkbox]').addEventListener('click', rowCheckerListener);
+            row.querySelector('input[type=checkbox]').addEventListener('click', rowCheckerListener);
+            dragEl.querySelector('span').addEventListener('click', editTodo);
+            row.querySelector('span').addEventListener('click', editTodo);
+            row.classList.remove('over');
+        }
+
+        return false;
+    });
+
+    row.addEventListener('dragend', function () {
+        this.classList.remove('over');
+        this.classList.remove('drag');
+    });
+
+    function rowCheckerListener(e) {
         thRow.querySelector('th > input[type="checkbox"]').checked = false;
-
-        rowRemove.style.display = (e.target.checked && tBody.childElementCount > 0) ? 'table-cell' : '';
 
         if (e.target.checked === true) {
             checker++;
-            row.classList.add('done');
+            this.parentNode.parentNode.classList.add('done');
         }
         if (e.target.checked === false) {
             checker--;
-            row.classList.remove('done');
+            this.parentNode.parentNode.classList.remove('done');
         }
 
         if (checker > 0 && !allRemove.style.display) {
@@ -115,22 +110,24 @@ function newTodo(todoshka) {
         }
 
         countChecked.querySelector('span.check').innerText = tBody.querySelectorAll('input[type="checkbox"]:checked').length + '';
-    });
+    }
+    rowChecker.addEventListener('click', rowCheckerListener);
 
     row.appendChild(getElement('td', '')).appendChild(rowChecker);
     row.appendChild(getElement('td', '<span>' + todoshka.value + '</span>'));
 
-    row.querySelector('span').addEventListener('click', function (e) {
-        if (e.target == this) {
-            editTodo(e.target);
-        }
-    });
+    row.querySelector('span').addEventListener('click', editTodo /*function (e) {
+        //if (e.target == this) {
+        //    editTodo(e.target);
+        //}
+    }*/);
     countTodo.querySelector('span.count').innerHTML = tBody.childElementCount + '';
     todoshka.value = "";
 }
 
-function editTodo(target) {
-    var oldest = target.innerHTML,
+function editTodo(e) {
+    var target = e.target,
+        oldest = target.innerHTML,
         editor = getInput('text', '', oldest),
         sender = getElement('button', 'OK'),
         canceler = getElement('button', 'Cancel');
