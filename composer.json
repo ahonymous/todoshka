@@ -1,0 +1,13 @@
+{
+    "name": "root/todoshka",
+    "authors": [
+        {
+            "name": "Oleksandr Moshta",
+            "email": "ahonymous@gmail.com"
+        }
+    ],
+    "require": {
+        "silex/silex": "~1.2",
+        "doctrine/dbal": "~2.5"
+    }
+}
