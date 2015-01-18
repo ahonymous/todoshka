@@ -21,7 +21,7 @@ $app->get('/todos', function (Request $request) use ($app) {
         return $access;
     }
 
-    $sql = 'SELECT id, checked, todo FROM todo WHERE apikey = "%s"';
+    $sql = 'SELECT "id", "checked", "value" FROM todo WHERE "apikey" = "%s"';
     $todos = $app['db']->fetchAll(sprintf($sql, $access));
 
     return $app->json($todos, 200);
@@ -33,8 +33,8 @@ $app->post('/todo', function (Request $request) use ($app) {
     }
 
     $data = json_decode($request->getContent(), true);
-    $insert = 'INSERT INTO todo (apikey, checked, todo) VALUES ("%s", %d, "%s")';
-    $update = 'UPDATE todo SET checked = "%d", todo = "%s" WHERE id = %d AND apikey = "%s"';
+    $insert = 'INSERT INTO todo ("apikey", "checked", "value") VALUES ("%s", %d, "%s")';
+    $update = 'UPDATE todo SET "checked" = "%d", "value" = "%s" WHERE "id" = %d AND "apikey" = "%s"';
 
 
     foreach ($data as $todo) {
@@ -59,14 +59,14 @@ $app->delete("/todo", function (Request $request) use ($app) {
     foreach ($data as $todo) {
         if (
             !array_key_exists('id', $todo)
-            && $app['db']->query(sprintf('SELECT * FROM todo WHERE apikey = %s AND id = %d', $access, $todo['id']))
+            && $app['db']->query(sprintf('SELECT * FROM todo WHERE "apikey" = %s AND "id" = %d', $access, $todo['id']))
         ) {
             return $app->json(['message' => 'No id in the todo'], 404);
         }
         $toRemove[] = $todo['id'];
     }
 
-    $sql = 'DELETE FROM todo WHERE apikey = %s AND id IN (%s)';
+    $sql = 'DELETE FROM todo WHERE "apikey" = %s AND "id" IN (%s)';
     $app['db']->query(sprintf($sql, $access, implode(',', $toRemove)));
 
     return $app->json(['message' => 'Ok']);
@@ -74,7 +74,7 @@ $app->delete("/todo", function (Request $request) use ($app) {
 
 $app->post('/db/install', function () use ($app) {
     $app['db']->exec('DROP TABLE IF EXISTS todo');
-    $app['db']->exec('CREATE TABLE todo (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, apikey VARCHAR(255), checked BOOLEAN, todo VARCHAR(255))');
+    $app['db']->exec('CREATE TABLE todo ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "apikey" VARCHAR(255), "checked" BOOLEAN, "value" VARCHAR(255))');
 
     return $app->json(['message' => 'Ok'], 201);
 });

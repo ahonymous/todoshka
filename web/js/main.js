@@ -9,7 +9,9 @@ var table = document.createElement('table'),
     view = document.querySelector('#view'),
     todoInput = getInput('text', 'todoshka'),
     allRemove = getElement('th', ' X ', 'delete'),
-    checker = 0;
+    checker = 0,
+    apikey = 'testApiKey',
+    response;
 
 function getInput(type, name, value) {
     var el = document.createElement('input');
@@ -49,6 +51,9 @@ function newTodo(todoshka) {
     var row = tBody.insertRow(0),
         rowChecker = getInput('checkbox', '');
 
+    if (todoshka.id > 0) {
+        row.id = todoshka.id;
+    }
     row.draggable = true;
     row.addEventListener('dragstart', function (e) {
         row.classList.add('drag');
@@ -95,7 +100,7 @@ function newTodo(todoshka) {
 
         if (e.target.checked === true) {
             checker++;
-            this.parentNode.parentNode.classList.add('done');
+            row.classList.add('done');
         }
         if (e.target.checked === false) {
             checker--;
@@ -113,6 +118,9 @@ function newTodo(todoshka) {
     }
 
     rowChecker.addEventListener('click', rowCheckerListener);
+    if (todoshka.checked == 1) {
+        rowChecker.click();
+    }
 
     row.appendChild(getElement('td', '')).appendChild(rowChecker);
     row.appendChild(getElement('td', '<span>' + todoshka.value + '</span>'));
@@ -220,8 +228,47 @@ thRow.querySelector('#todoshkaButton').addEventListener('click', function (e) {
 tfRow.appendChild(countChecked);
 tfRow.appendChild(countTodo);
 
+function getTodo() {
+    var server = getXmlHttp();
+
+    server.open('GET', document.URL + 'index.php/todos', true);
+    server.setRequestHeader('apikey', apikey);
+    server.onreadystatechange = function () {
+        if (server.readyState == 4) {
+            if (server.status == 200) {
+                response = JSON.parse(server.responseText);
+
+                if (response.length) {
+                    response.forEach(function (val) {
+                        newTodo(val);
+                    });
+                }
+            }
+        }
+    };
+    server.send();
+}
+
+function getXmlHttp() {
+    var xmlhttp;
+    try {
+        xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+    } catch (e) {
+        try {
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch (E) {
+            xmlhttp = false;
+        }
+    }
+    if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+        xmlhttp = new XMLHttpRequest();
+    }
+    return xmlhttp;
+}
+
 if (!view.querySelector('table')) {
     view.appendChild(table);
+    getTodo();
 }
 
 NodeList.prototype.forEach = function (callback) {
